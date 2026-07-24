@@ -11968,13 +11968,15 @@ end = struct
                 `No
             in
             if
-              is_attribute
-              ||
               match attribute_check_policy with
               | Expr.Skip_package -> true
               | _ -> false
             then
               `No
+            else if is_attribute then
+              (* `<<C>>` references the attribute class C. *)
+              exempt_unless_strict_isolation
+                Typing_error.Primary.Package.Attribute
             else if is_catch then
               (* `catch (C $e)` references the exception class C. *)
               exempt_unless_strict_isolation Typing_error.Primary.Package.Class
